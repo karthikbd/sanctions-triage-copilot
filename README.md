@@ -4,6 +4,8 @@
 
 **Live demo:** https://sanctions-triage-copilot.vercel.app (Vercel + Supabase Postgres + a Docker worker on GitHub Actions; see [DEPLOY.md](DEPLOY.md))
 
+**Source:** https://github.com/karthikbd/sanctions-triage-copilot. Every push to `main` deploys to production on Vercel, and pull requests get preview deployments.
+
 Banks spend most of their sanctions-compliance effort closing false-positive alerts: a customer shares a name with a listed party, an analyst compares dates of birth and countries, writes a disposition note and closes it. This project automates the evidence-gathering and first-level recommendation for those alerts, and it treats safety as a design constraint rather than an afterthought:
 
 - **A true match is never closed by a machine.** Only a human confirms or clears a real hit.

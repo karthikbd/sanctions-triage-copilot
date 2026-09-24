@@ -43,10 +43,10 @@ Set these under Project → Settings → Environment Variables, then redeploy:
 | `STC_NIGHTLY_RESET` | Optional. `true` clears the alert queue in the daily cron (off by default, so decisions persist) |
 
 ## 3. GitHub + worker
-1. Push this folder to a new GitHub repo.
+1. Push this folder to a GitHub repo (this project: `karthikbd/sanctions-triage-copilot`).
 2. Repo → Settings → Secrets → Actions: add `STC_DATABASE_URL` (and optionally `ANTHROPIC_API_KEY`).
 3. Actions → **worker** → Run workflow, with task `refresh`, to load the first OpenSanctions snapshot. After that it runs every 6 hours. Other tasks are `synth`, `screen-book`, `reset-queue` and `status`.
-4. Optional: connect the repo to the Vercel project (Settings → Git) so every push deploys.
+4. Connect the repo to the Vercel project (Settings → Git). This project is connected: pushes to `main` deploy to production, and other branches and pull requests get preview URLs.
 
 ## Local Docker
 ```
