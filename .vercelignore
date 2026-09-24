@@ -1,8 +1,8 @@
 .venv
 .env
 *.sqlite3
-data/
-tests/
+/data/
+/tests/
 evals/results/
 docs/*.png
 .vscode/
