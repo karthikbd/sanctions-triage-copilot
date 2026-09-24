@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["iad1"],
+  "buildCommand": "cd web && npm install --no-audit --no-fund && npm run build",
+  "functions": {
+    "index.py": {
+      "maxDuration": 300,
+      "memory": 2048,
+      "excludeFiles": "{web/**,tests/**,evals/**,docs/**,supabase/**,.github/**,.vscode/**,**/__pycache__/**,run_windows.bat,Dockerfile,docker-compose.yml}"
+    }
+  },
+  "crons": [
+    { "path": "/api/cron/daily", "schedule": "0 7 * * *" }
+  ]
+}

@@ -1,0 +1,9 @@
+reference,name,party_type,dob,country,nationality,id_numbers
+CUST-0001,Emily Carter,individual,1988-04-02,United States,,
+CUST-0002,Muhammad Said Rashidi,individual,14/02/1968,Lebanon,Syria,
+CUST-0003,Kim Min-jun,individual,1995-08-14,South Korea,,
+CUST-0004,Golden Crescent Trading L.L.C.,entity,,UAE,,
+CUST-0005,Rahul Mehta,individual,1979-11-30,India,,
+CUST-0006,M/T Ocean Pearl,vessel,,Panama,,IMO9187423
+CUST-0007,Luis Salazar,individual,,Spain,,
+CUST-0008,Nordic Timber Holdings AB,entity,,Sweden,,

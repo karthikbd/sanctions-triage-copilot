@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+/* Theme: the app sets <html data-theme="light|dark"> (user choice or OS setting); `dark:` utilities follow it. */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* Neutral, dense "observability console" palette (LangSmith-like). Light by default, dark via OS setting. */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --color-bg: #ffffff;
+  --color-subtle: #f7f8f9;
+  --color-sunken: #f1f3f5;
+  --color-side: #fafbfb;
+  --color-line: #e6e8eb;
+  --color-line-strong: #d4d8dd;
+  --color-fg: #111418;
+  --color-muted: #5f6772;
+  --color-faint: #8a919b;
+  --color-brand: #0f766e;
+  --color-brand-soft: #e6f4f2;
+  --color-primary: #16191d;
+  --color-primary-fg: #ffffff;
+  --color-focus: #2f6fec;
+  --color-red: #c4320a;
+  --color-red-soft: #fef1ec;
+  --color-amber: #a15c07;
+  --color-amber-soft: #fef7e6;
+  --color-green: #0f7a4a;
+  --color-green-soft: #eaf7f0;
+  --color-blue: #1f5fc4;
+  --color-blue-soft: #edf3fd;
+  --color-gray-soft: #f0f2f4;
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #0d0f12;
+  --color-subtle: #13161a;
+  --color-sunken: #181c21;
+  --color-side: #0f1215;
+  --color-line: #23282f;
+  --color-line-strong: #323841;
+  --color-fg: #e8eaed;
+  --color-muted: #a0a7b1;
+  --color-faint: #737b86;
+  --color-brand: #2dd4bf;
+  --color-brand-soft: rgba(45, 212, 191, 0.12);
+  --color-primary: #e8eaed;
+  --color-primary-fg: #0d0f12;
+  --color-focus: #6b9cff;
+  --color-red: #ff8466;
+  --color-red-soft: rgba(255, 110, 80, 0.12);
+  --color-amber: #f5b94a;
+  --color-amber-soft: rgba(245, 185, 74, 0.12);
+  --color-green: #4cd290;
+  --color-green-soft: rgba(76, 210, 144, 0.12);
+  --color-blue: #7eaaff;
+  --color-blue-soft: rgba(126, 170, 255, 0.12);
+  --color-gray-soft: rgba(255, 255, 255, 0.06);
+}
+/* Before the script runs, follow the OS setting unless the user picked light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-bg: #0d0f12;
+    --color-subtle: #13161a;
+    --color-sunken: #181c21;
+    --color-side: #0f1215;
+    --color-line: #23282f;
+    --color-line-strong: #323841;
+    --color-fg: #e8eaed;
+    --color-muted: #a0a7b1;
+    --color-faint: #737b86;
+    --color-brand: #2dd4bf;
+    --color-brand-soft: rgba(45, 212, 191, 0.12);
+    --color-primary: #e8eaed;
+    --color-primary-fg: #0d0f12;
+    --color-focus: #6b9cff;
+    --color-red: #ff8466;
+    --color-red-soft: rgba(255, 110, 80, 0.12);
+    --color-amber: #f5b94a;
+    --color-amber-soft: rgba(245, 185, 74, 0.12);
+    --color-green: #4cd290;
+    --color-green-soft: rgba(76, 210, 144, 0.12);
+    --color-blue: #7eaaff;
+    --color-blue-soft: rgba(126, 170, 255, 0.12);
+    --color-gray-soft: rgba(255, 255, 255, 0.06);
+  }
+}
+
+html { color-scheme: light; }
+html[data-theme="dark"] { color-scheme: dark; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv11", "ss01";
+}
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 1px; border-radius: 4px; }
+@layer base {
+  input, select, textarea, button { font: inherit; color: inherit; }
+}
+.tnum { font-variant-numeric: tabular-nums; }
+.scroll-thin { scrollbar-width: thin; }
+@keyframes slide-in { from { transform: translateX(24px); opacity: 0 } to { transform: none; opacity: 1 } }
+.animate-slide-in { animation: slide-in .16s ease-out; }

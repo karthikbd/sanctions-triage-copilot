@@ -1,0 +1,45 @@
+name: worker
+# Heavy jobs against Supabase, run in the Docker worker image:
+#  - every 6 hours: sync OpenSanctions lists and re-screen the customer book against new/changed entries
+#  - on demand: generate a synthetic customer book with SDV + Faker and screen it
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      task:
+        description: Worker task
+        type: choice
+        options: [refresh, synth, screen-book, reset-queue, status]
+        default: refresh
+      customers:
+        description: Customers to generate (synth)
+        default: "5000"
+
+concurrency: { group: worker, cancel-in-progress: false }
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: worker
+          tags: stc-worker:ci
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Run worker
+        env:
+          STC_DATABASE_URL: ${{ secrets.STC_DATABASE_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$STC_DATABASE_URL" ]; then echo "::error::Add the STC_DATABASE_URL repository secret (Supabase transaction pooler URI)"; exit 1; fi
+          TASK="${{ github.event.inputs.task || 'refresh' }}"
+          ARGS=""
+          if [ "$TASK" = "synth" ]; then ARGS="--n ${{ github.event.inputs.customers || '5000' }} --screen"; fi
+          docker run --rm -e STC_DATABASE_URL -e ANTHROPIC_API_KEY -e STC_WATCHLIST=opensanctions stc-worker:ci $TASK $ARGS

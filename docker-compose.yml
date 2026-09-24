@@ -1,0 +1,15 @@
+# Local:   docker compose up app                          -> http://localhost:8000
+# Worker:  docker compose run --rm worker refresh          (needs STC_DATABASE_URL in .env for Supabase)
+#          docker compose run --rm worker synth --n 5000 --screen
+services:
+  app:
+    build: { context: ., target: app }
+    ports: ["8000:8000"]
+    env_file: [.env]
+    volumes: ["stc-data:/data"]
+  worker:
+    build: { context: ., target: worker }
+    env_file: [.env]
+    profiles: ["worker"]
+volumes:
+  stc-data:

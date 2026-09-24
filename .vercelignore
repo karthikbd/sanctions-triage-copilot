@@ -1,0 +1,11 @@
+.venv
+.env
+*.sqlite3
+data/
+tests/
+evals/results/
+docs/*.png
+.vscode/
+.github/
+run_windows.bat
+web/node_modules/

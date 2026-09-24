@@ -1,0 +1,6 @@
+id,schema,name,aliases,birth_date,countries,addresses,identifiers,sanctions,phones,emails,program_ids,dataset,first_seen,last_seen,last_change
+NK-aaa111,Person,Tariq Walid Qaramanli,Tareq Qaramanly;Tariq al-Qaramanli,1966-03-04,iq,Baghdad,A7712093,US OFAC SDN - SDGT,,,US-SDGT,us_ofac_sdn,2021-01-01,2026-09-23,2025-02-01
+NK-bbb222,Company,Blue Tern Shipping Ltd.,Blue Tern Marine,,mh,Majuro,5523190,US OFAC SDN - IRAN,,,US-IRAN,us_ofac_sdn,2020-05-05,2026-09-23,2024-01-01
+NK-ccc333,Vessel,NIGHT HERON,,,pa,,IMO9412277,US OFAC SDN - IRAN,,,US-IRAN,us_ofac_sdn,2020-05-05,2026-09-23,2024-01-01
+NK-ddd444,CryptoWallet,0xdeadbeef,,,,,,US OFAC SDN,,,,us_ofac_sdn,2022-01-01,2026-09-23,2022-01-01
+NK-eee555,Person,Irina Pavlovna Sokolenko,Irina Sokolenko,1979,ru,,,EU FSF - RUS,,,EU-RUS,eu_fsf,2022-03-01,2026-09-23,2025-06-01

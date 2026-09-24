@@ -1,0 +1,19 @@
+__pycache__/
+*.egg-info/
+.venv/
+.env
+*.sqlite3
+data/ofac/
+screening_results.csv
+.pytest_cache/
+data/opensanctions/
+data/customers/
+
+web/node_modules/
+public/
+
+# local-only
+.vscode/
+stc.sqlite3
+media/*.mp4
+media/*.mp3

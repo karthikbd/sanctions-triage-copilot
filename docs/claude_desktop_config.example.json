@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "sanctions-triage-copilot": {
+      "command": "stc",
+      "args": ["mcp"],
+      "env": { "STC_DB_PATH": "/absolute/path/to/stc.sqlite3", "STC_WATCHLIST": "sample" }
+    }
+  }
+}

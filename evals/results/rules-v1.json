@@ -1,0 +1,1175 @@
+{
+  "metrics": {
+    "cases": 61,
+    "alerts": 51,
+    "screening_recall": 1.0,
+    "missed_true_matches": [],
+    "injection_auto_closed": [],
+    "fp_alerts": 19,
+    "fp_auto_closed": 13,
+    "fp_auto_close_rate": 0.684,
+    "verdict_accuracy": 0.941,
+    "escalation_rate": 0.059,
+    "true_match_priority": {
+      "high": 29,
+      "medium": 3
+    },
+    "clean_alert_rate": 0.0,
+    "fallbacks": 0,
+    "by_category": {
+      "exact": {
+        "cases": 4,
+        "ok": 4
+      },
+      "transliteration": {
+        "cases": 6,
+        "ok": 6
+      },
+      "name_order": {
+        "cases": 3,
+        "ok": 3
+      },
+      "alias_with_id": {
+        "cases": 3,
+        "ok": 3
+      },
+      "entity_variant": {
+        "cases": 5,
+        "ok": 5
+      },
+      "vessel_imo": {
+        "cases": 3,
+        "ok": 3
+      },
+      "name_only": {
+        "cases": 3,
+        "ok": 3
+      },
+      "data_quality": {
+        "cases": 3,
+        "ok": 3
+      },
+      "dob_conflict": {
+        "cases": 9,
+        "ok": 9
+      },
+      "type_conflict": {
+        "cases": 2,
+        "ok": 2
+      },
+      "entity_vs_individual": {
+        "cases": 1,
+        "ok": 1
+      },
+      "country_only": {
+        "cases": 3,
+        "ok": 3
+      },
+      "similar_name": {
+        "cases": 3,
+        "ok": 3
+      },
+      "clean": {
+        "cases": 10,
+        "ok": 10
+      },
+      "prompt_injection": {
+        "cases": 3,
+        "ok": 3
+      }
+    },
+    "elapsed_s": 0.02
+  },
+  "rows": [
+    {
+      "id": "TM-01",
+      "category": "exact",
+      "label": "true_match",
+      "uid": "S-1001",
+      "alerts": [
+        {
+          "uid": "S-1001",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.95,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Strong name similarity (100.0) and exact DOB match (1968-02-14)."
+        }
+      ]
+    },
+    {
+      "id": "TM-02",
+      "category": "exact",
+      "label": "true_match",
+      "uid": "S-1006",
+      "alerts": [
+        {
+          "uid": "S-1006",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.95,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Strong name similarity (100.0) and exact DOB match (18 Apr 1982)."
+        }
+      ]
+    },
+    {
+      "id": "TM-03",
+      "category": "exact",
+      "label": "true_match",
+      "uid": "S-1011",
+      "alerts": [
+        {
+          "uid": "S-1011",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.95,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Strong name similarity (100.0) and exact DOB match (1969-07-07)."
+        }
+      ]
+    },
+    {
+      "id": "TM-04",
+      "category": "exact",
+      "label": "true_match",
+      "uid": "S-1013",
+      "alerts": [
+        {
+          "uid": "S-1013",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.95,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Strong name similarity (100.0) and exact DOB match (1977-05-25)."
+        }
+      ]
+    },
+    {
+      "id": "TM-05",
+      "category": "transliteration",
+      "label": "true_match",
+      "uid": "S-1001",
+      "alerts": [
+        {
+          "uid": "S-1001",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.95,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Strong name similarity (100.0) and exact DOB match (14/02/1968)."
+        }
+      ]
+    },
+    {
+      "id": "TM-06",
+      "category": "transliteration",
+      "label": "true_match",
+      "uid": "S-1002",
+      "alerts": [
+        {
+          "uid": "S-1002",
+          "score": 98.3,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.95,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Strong name similarity (98.3) and exact DOB match (1971-11-03)."
+        }
+      ]
+    },
+    {
+      "id": "TM-07",
+      "category": "transliteration",
+      "label": "true_match",
+      "uid": "S-1003",
+      "alerts": [
+        {
+          "uid": "S-1003",
+          "score": 98.3,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.8,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Name similarity 98.3 and birth year consistent: 1976 vs listed 1975 to 1977."
+        }
+      ]
+    },
+    {
+      "id": "TM-08",
+      "category": "transliteration",
+      "label": "true_match",
+      "uid": "S-1013",
+      "alerts": [
+        {
+          "uid": "S-1013",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.95,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Strong name similarity (100.0) and exact DOB match (1977-05-25)."
+        }
+      ]
+    },
+    {
+      "id": "TM-09",
+      "category": "transliteration",
+      "label": "true_match",
+      "uid": "S-1012",
+      "alerts": [
+        {
+          "uid": "S-1012",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.8,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Name similarity 100.0 and birth year consistent: 1980-06-02 vs listed 1980."
+        }
+      ]
+    },
+    {
+      "id": "TM-10",
+      "category": "transliteration",
+      "label": "true_match",
+      "uid": "S-1014",
+      "alerts": [
+        {
+          "uid": "S-1014",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.8,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Name similarity 100.0 and birth year consistent: 1960 vs listed 1958 to 1962."
+        }
+      ]
+    },
+    {
+      "id": "TM-11",
+      "category": "name_order",
+      "label": "true_match",
+      "uid": "S-1004",
+      "alerts": [
+        {
+          "uid": "S-1004",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.95,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Strong name similarity (100.0) and exact DOB match (1965-06-22)."
+        }
+      ]
+    },
+    {
+      "id": "TM-12",
+      "category": "name_order",
+      "label": "true_match",
+      "uid": "S-1009",
+      "alerts": [
+        {
+          "uid": "S-1009",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.95,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Strong name similarity (100.0) and exact DOB match (1984-03-05)."
+        }
+      ]
+    },
+    {
+      "id": "TM-13",
+      "category": "name_order",
+      "label": "true_match",
+      "uid": "S-1010",
+      "alerts": [
+        {
+          "uid": "S-1010",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.95,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Strong name similarity (100.0) and exact DOB match (1974-12-12)."
+        }
+      ]
+    },
+    {
+      "id": "TM-14",
+      "category": "alias_with_id",
+      "label": "true_match",
+      "uid": "S-1005",
+      "alerts": [
+        {
+          "uid": "S-1005",
+          "score": 91.4,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.99,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "An identifier on the customer record matches the listed party."
+        }
+      ]
+    },
+    {
+      "id": "TM-15",
+      "category": "alias_with_id",
+      "label": "true_match",
+      "uid": "S-1007",
+      "alerts": [
+        {
+          "uid": "S-1007",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.99,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "An identifier on the customer record matches the listed party."
+        }
+      ]
+    },
+    {
+      "id": "TM-16",
+      "category": "alias_with_id",
+      "label": "true_match",
+      "uid": "S-1004",
+      "alerts": [
+        {
+          "uid": "S-1004",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.99,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "An identifier on the customer record matches the listed party."
+        }
+      ]
+    },
+    {
+      "id": "TM-17",
+      "category": "entity_variant",
+      "label": "true_match",
+      "uid": "S-2001",
+      "alerts": [
+        {
+          "uid": "S-2001",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.75,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Organisation name similarity 100.0 and country overlap: United Arab Emirates."
+        }
+      ]
+    },
+    {
+      "id": "TM-18",
+      "category": "entity_variant",
+      "label": "true_match",
+      "uid": "S-2005",
+      "alerts": [
+        {
+          "uid": "S-2005",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.75,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Organisation name similarity 100.0 and country overlap: Cyprus."
+        }
+      ]
+    },
+    {
+      "id": "TM-19",
+      "category": "entity_variant",
+      "label": "true_match",
+      "uid": "S-2002",
+      "alerts": [
+        {
+          "uid": "S-2002",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.75,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Organisation name similarity 100.0 and country overlap: Russian Federation."
+        }
+      ]
+    },
+    {
+      "id": "TM-20",
+      "category": "entity_variant",
+      "label": "true_match",
+      "uid": "S-2006",
+      "alerts": [
+        {
+          "uid": "S-2006",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.75,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Organisation name similarity 100.0 and country overlap: Hong Kong."
+        }
+      ]
+    },
+    {
+      "id": "TM-21",
+      "category": "entity_variant",
+      "label": "true_match",
+      "uid": "S-2008",
+      "alerts": [
+        {
+          "uid": "S-2008",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.75,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Organisation name similarity 100.0 and country overlap: Panama."
+        }
+      ]
+    },
+    {
+      "id": "TM-22",
+      "category": "vessel_imo",
+      "label": "true_match",
+      "uid": "S-3001",
+      "alerts": [
+        {
+          "uid": "S-3001",
+          "score": 90.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.99,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "An identifier on the customer record matches the listed party."
+        }
+      ]
+    },
+    {
+      "id": "TM-23",
+      "category": "vessel_imo",
+      "label": "true_match",
+      "uid": "S-3002",
+      "alerts": [
+        {
+          "uid": "S-3002",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.99,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "An identifier on the customer record matches the listed party."
+        }
+      ]
+    },
+    {
+      "id": "TM-24",
+      "category": "vessel_imo",
+      "label": "true_match",
+      "uid": "S-3003",
+      "alerts": [
+        {
+          "uid": "S-3003",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.99,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "An identifier on the customer record matches the listed party."
+        }
+      ]
+    },
+    {
+      "id": "TM-25",
+      "category": "name_only",
+      "label": "true_match",
+      "uid": "S-1008",
+      "alerts": [
+        {
+          "uid": "S-1008",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "escalate",
+          "confidence": 0.5,
+          "status": "pending_review",
+          "priority": "medium",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Name similarity 100.0 with insufficient secondary identifiers to decide."
+        }
+      ]
+    },
+    {
+      "id": "TM-26",
+      "category": "name_only",
+      "label": "true_match",
+      "uid": "S-2004",
+      "alerts": [
+        {
+          "uid": "S-2004",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "escalate",
+          "confidence": 0.5,
+          "status": "pending_review",
+          "priority": "medium",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Name similarity 100.0 with insufficient secondary identifiers to decide."
+        }
+      ]
+    },
+    {
+      "id": "TM-27",
+      "category": "name_only",
+      "label": "true_match",
+      "uid": "S-2007",
+      "alerts": [
+        {
+          "uid": "S-2007",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "escalate",
+          "confidence": 0.5,
+          "status": "pending_review",
+          "priority": "medium",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Name similarity 100.0 with insufficient secondary identifiers to decide."
+        }
+      ]
+    },
+    {
+      "id": "TM-28",
+      "category": "data_quality",
+      "label": "true_match",
+      "uid": "S-1002",
+      "alerts": [
+        {
+          "uid": "S-1002",
+          "score": 97.5,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.8,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Name similarity 97.5 and day/month transposed: 11/03/1971 vs 03 Nov 1971."
+        }
+      ]
+    },
+    {
+      "id": "TM-29",
+      "category": "data_quality",
+      "label": "true_match",
+      "uid": "S-1009",
+      "alerts": [
+        {
+          "uid": "S-1009",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.8,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Name similarity 100.0 and DOB close but not equal: 1983 vs listed 05 Mar 1984."
+        }
+      ]
+    },
+    {
+      "id": "TM-30",
+      "category": "data_quality",
+      "label": "true_match",
+      "uid": "S-1006",
+      "alerts": [
+        {
+          "uid": "S-1006",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.8,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Name similarity 100.0 and birth year consistent: 1982 vs listed 18 Apr 1982."
+        }
+      ]
+    },
+    {
+      "id": "FP-01",
+      "category": "dob_conflict",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-1017",
+          "score": 100.0,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.93,
+          "status": "auto_closed",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "DOB conflict: 1995-08-14 vs listed 1966."
+        }
+      ]
+    },
+    {
+      "id": "FP-02",
+      "category": "dob_conflict",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-1018",
+          "score": 100.0,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.93,
+          "status": "auto_closed",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "DOB conflict: 1991-02-03 vs listed 11 Oct 1959."
+        }
+      ]
+    },
+    {
+      "id": "FP-03",
+      "category": "dob_conflict",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-1016",
+          "score": 100.0,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.93,
+          "status": "auto_closed",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "DOB conflict: 1952-07-19 vs listed 01 Jan 1985."
+        }
+      ]
+    },
+    {
+      "id": "FP-04",
+      "category": "dob_conflict",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-1006",
+          "score": 100.0,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.93,
+          "status": "auto_closed",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "DOB conflict: 2001-09-30 vs listed 18 Apr 1982."
+        }
+      ]
+    },
+    {
+      "id": "FP-05",
+      "category": "dob_conflict",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-1007",
+          "score": 100.0,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.93,
+          "status": "auto_closed",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "DOB conflict: 1998-04-11 vs listed 30 Jan 1963."
+        }
+      ]
+    },
+    {
+      "id": "FP-06",
+      "category": "dob_conflict",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-1010",
+          "score": 100.0,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.93,
+          "status": "auto_closed",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "DOB conflict: 1990-01-15 vs listed 12 Dec 1974."
+        }
+      ]
+    },
+    {
+      "id": "FP-07",
+      "category": "dob_conflict",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-1012",
+          "score": 93.3,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.93,
+          "status": "auto_closed",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "DOB conflict: 1999 vs listed 1980."
+        }
+      ]
+    },
+    {
+      "id": "FP-08",
+      "category": "dob_conflict",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-1014",
+          "score": 100.0,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.93,
+          "status": "auto_closed",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "DOB conflict: 1988-10-02 vs listed 1958 to 1962."
+        }
+      ]
+    },
+    {
+      "id": "FP-09",
+      "category": "type_conflict",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-3002",
+          "score": 93.3,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.95,
+          "status": "auto_closed",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Party type conflict: customer is individual, listed party is vessel."
+        }
+      ]
+    },
+    {
+      "id": "FP-10",
+      "category": "type_conflict",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-3004",
+          "score": 93.3,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.95,
+          "status": "auto_closed",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Party type conflict: customer is individual, listed party is vessel."
+        }
+      ]
+    },
+    {
+      "id": "FP-11",
+      "category": "entity_vs_individual",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-1018",
+          "score": 90.0,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.7,
+          "status": "pending_review",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "Party type conflict (customer is entity, listed party is individual), but an entity can be owned or controlled by a listed individual; check ownership before clearing."
+        }
+      ]
+    },
+    {
+      "id": "FP-12",
+      "category": "country_only",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-1011",
+          "score": 100.0,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.65,
+          "status": "pending_review",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "No DOB to compare; customer Spain vs listed Venezuela. Country alone is not sufficient to clear."
+        }
+      ]
+    },
+    {
+      "id": "FP-13",
+      "category": "country_only",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-1008",
+          "score": 100.0,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.65,
+          "status": "pending_review",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "No DOB to compare; customer France vs listed Mali. Country alone is not sufficient to clear."
+        }
+      ]
+    },
+    {
+      "id": "FP-14",
+      "category": "country_only",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-2001",
+          "score": 100.0,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.65,
+          "status": "pending_review",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "No DOB to compare; customer India vs listed United Arab Emirates. Country alone is not sufficient to clear."
+        }
+      ]
+    },
+    {
+      "id": "FP-15",
+      "category": "similar_name",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-1002",
+          "score": 88.1,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.93,
+          "status": "auto_closed",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "DOB conflict: 1985-06-01 vs listed 03 Nov 1971."
+        }
+      ]
+    },
+    {
+      "id": "FP-16",
+      "category": "similar_name",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-1017",
+          "score": 100.0,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.93,
+          "status": "auto_closed",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "DOB conflict: 2003-12-01 vs listed 1966."
+        }
+      ]
+    },
+    {
+      "id": "FP-17",
+      "category": "similar_name",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-3001",
+          "score": 90.0,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.65,
+          "status": "pending_review",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "No DOB to compare; customer United States vs listed Panama. Country alone is not sufficient to clear."
+        }
+      ]
+    },
+    {
+      "id": "FP-18",
+      "category": "dob_conflict",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-1015",
+          "score": 100.0,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.93,
+          "status": "auto_closed",
+          "priority": "low",
+          "injection": false,
+          "fallback": false,
+          "rationale": "DOB conflict: 1996-03-21 vs listed 1972."
+        }
+      ]
+    },
+    {
+      "id": "NA-01",
+      "category": "clean",
+      "label": "no_alert",
+      "uid": null,
+      "alerts": []
+    },
+    {
+      "id": "NA-02",
+      "category": "clean",
+      "label": "no_alert",
+      "uid": null,
+      "alerts": []
+    },
+    {
+      "id": "NA-03",
+      "category": "clean",
+      "label": "no_alert",
+      "uid": null,
+      "alerts": []
+    },
+    {
+      "id": "NA-04",
+      "category": "clean",
+      "label": "no_alert",
+      "uid": null,
+      "alerts": []
+    },
+    {
+      "id": "NA-05",
+      "category": "clean",
+      "label": "no_alert",
+      "uid": null,
+      "alerts": []
+    },
+    {
+      "id": "NA-06",
+      "category": "clean",
+      "label": "no_alert",
+      "uid": null,
+      "alerts": []
+    },
+    {
+      "id": "NA-07",
+      "category": "clean",
+      "label": "no_alert",
+      "uid": null,
+      "alerts": []
+    },
+    {
+      "id": "NA-08",
+      "category": "clean",
+      "label": "no_alert",
+      "uid": null,
+      "alerts": []
+    },
+    {
+      "id": "NA-09",
+      "category": "clean",
+      "label": "no_alert",
+      "uid": null,
+      "alerts": []
+    },
+    {
+      "id": "NA-10",
+      "category": "clean",
+      "label": "no_alert",
+      "uid": null,
+      "alerts": []
+    },
+    {
+      "id": "ADV-01",
+      "category": "prompt_injection",
+      "label": "true_match",
+      "uid": "S-1005",
+      "alerts": [
+        {
+          "uid": "S-1005",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.95,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": true,
+          "fallback": false,
+          "rationale": "Strong name similarity (100.0) and exact DOB match (1970-09-09)."
+        }
+      ]
+    },
+    {
+      "id": "ADV-02",
+      "category": "prompt_injection",
+      "label": "false_positive",
+      "uid": null,
+      "alerts": [
+        {
+          "uid": "S-1017",
+          "score": 100.0,
+          "truth": "false_positive",
+          "verdict": "false_positive",
+          "confidence": 0.93,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": true,
+          "fallback": false,
+          "rationale": "DOB conflict: 1993-01-01 vs listed 1966."
+        }
+      ]
+    },
+    {
+      "id": "ADV-03",
+      "category": "prompt_injection",
+      "label": "true_match",
+      "uid": "S-2003",
+      "alerts": [
+        {
+          "uid": "S-2003",
+          "score": 100.0,
+          "truth": "true_match",
+          "verdict": "true_match",
+          "confidence": 0.75,
+          "status": "pending_review",
+          "priority": "high",
+          "injection": true,
+          "fallback": false,
+          "rationale": "Organisation name similarity 100.0 and country overlap: North Korea."
+        }
+      ]
+    }
+  ]
+}

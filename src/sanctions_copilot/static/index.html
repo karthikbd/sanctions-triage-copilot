@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sanctions Triage Copilot</title>
+<style>
+:root{
+  --bg:#f5f6f8; --panel:#ffffff; --ink:#15202b; --muted:#5b6b7b; --line:#e3e7ec; --soft:#f0f3f6;
+  --brand:#0f4c81; --brand-ink:#ffffff; --accent:#0b7a75;
+  --high:#c0392b; --high-bg:#fdecea; --med:#b7791f; --med-bg:#fdf3e1; --low:#2f7d4f; --low-bg:#e8f5ed;
+  --info-bg:#e8f0fa; --shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#0f141a;--panel:#161d25;--ink:#e6edf3;--muted:#9aa8b6;--line:#26313d;--soft:#1c2530;
+  --brand:#3b82c4;--accent:#2bb3a9;--high:#f07167;--high-bg:#3a1f1f;--med:#f2b84b;--med-bg:#3a2e17;
+  --low:#5cc28a;--low-bg:#173024;--info-bg:#18283a;--shadow:none}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{display:flex;align-items:center;gap:16px;padding:14px 24px;background:var(--brand);color:var(--brand-ink);flex-wrap:wrap}
+header h1{font-size:17px;margin:0;font-weight:650;letter-spacing:.2px}
+header .sub{opacity:.8;font-size:12.5px}
+header .pills{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;background:rgba(255,255,255,.14);white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:currentColor}
+.banner{max-width:1500px;margin:12px auto 0;padding:0 24px}
+.banner div{border-radius:10px;padding:10px 14px;font-size:13px;background:var(--info-bg);color:var(--brand);border:1px solid var(--line)}
+.banner .err{background:var(--high-bg);color:var(--high)}
+main{padding:16px 24px 20px;display:grid;gap:18px;max-width:1500px;margin:0 auto}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;box-shadow:var(--shadow)}
+.kpi .v{font-size:22px;font-weight:650;font-variant-numeric:tabular-nums}
+.kpi .l{color:var(--muted);font-size:12px}
+.grid{display:grid;grid-template-columns:400px minmax(0,1fr);gap:18px;align-items:start}
+.grid>*,.dgrid>*{min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+.card .body{padding:12px 16px 16px}
+h4{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:4px 0 6px}
+label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font:inherit}
+input[type=checkbox]{width:auto;margin-right:6px}
+textarea{min-height:58px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 12px}
+button.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600;padding:10px}
+button.wide{width:100%}
+button:disabled{opacity:.55;cursor:not-allowed}
+.btnrow{display:flex;gap:8px;margin-top:14px}
+.btnrow .primary{flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--soft);border:1px solid var(--line)}
+.chip:hover,.chip.on{border-color:var(--brand)}
+.hint{font-size:12px;color:var(--muted);margin:6px 0 0}
+.scen-desc{font-size:12.5px;margin-top:8px;padding:8px 10px;border-radius:8px;background:var(--info-bg);display:none}
+.result{margin-top:14px;border-radius:10px;padding:12px;border:1px solid var(--line);background:var(--soft);display:none}
+.result.show{display:block}
+.result .big{font-weight:650;font-size:15px;margin-bottom:4px}
+.note{border-radius:8px;padding:8px 10px;font-size:12.5px;margin-top:8px;border:1px solid var(--line);background:var(--panel)}
+.note.bad{background:var(--high-bg);color:var(--high);font-weight:600}
+.tabs{display:flex;gap:2px;padding:10px 12px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;align-items:flex-end}
+.tab{border:none;background:none;padding:8px 10px;border-bottom:2px solid transparent;border-radius:0;color:var(--muted)}
+.tab.on{color:var(--ink);border-bottom-color:var(--brand);font-weight:600}
+.tabs .spacer{flex:1}
+.tabs .tool{margin:0 0 6px;font-size:12px;padding:5px 10px}
+.pane{display:none}.pane.on{display:block}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600}
+#rows tr{cursor:pointer}
+#rows tr:hover{background:var(--soft)}
+#rows tr.sel{background:var(--info-bg)}
+.mini th,.mini td{padding:6px 8px;font-size:12.5px}
+.num{font-variant-numeric:tabular-nums;text-align:right}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.b-high{background:var(--high-bg);color:var(--high)} .b-medium{background:var(--med-bg);color:var(--med)} .b-low{background:var(--low-bg);color:var(--low)}
+.b-true_match{background:var(--high-bg);color:var(--high)} .b-false_positive{background:var(--low-bg);color:var(--low)} .b-escalate{background:var(--med-bg);color:var(--med)}
+.b-auto_closed{background:var(--soft);color:var(--muted)} .b-pending_review{background:var(--info-bg);color:var(--brand)}
+.b-confirmed_match{background:var(--high-bg);color:var(--high)} .b-cleared{background:var(--low-bg);color:var(--low)}
+.b-origin{background:var(--soft);color:var(--muted);font-weight:500}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.detail{display:none;border-top:1px solid var(--line)}
+.detail.show{display:block}
+.dgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;padding:16px}
+.cmp td,.cmp th{padding:7px 10px;font-size:13px}
+.cmp td:first-child{color:var(--muted);width:110px}
+.sig{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}
+.sigc{border-radius:8px;padding:8px 10px;font-size:12px;border:1px solid var(--line)}
+.sigc b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:2px}
+.s-exact,.s-match{background:var(--high-bg)} .s-mismatch{background:var(--low-bg)} .s-near{background:var(--med-bg)}
+.rec{border-radius:10px;padding:12px;background:var(--soft);border:1px solid var(--line)}
+.bar{height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin:6px 0 10px}
+.bar>i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.warn{background:var(--high-bg);color:var(--high);border-radius:8px;padding:8px 10px;font-size:12.5px;margin-bottom:10px;font-weight:600}
+ul.tight{margin:6px 0 0;padding-left:18px} ul.tight li{margin:2px 0}
+.muted{color:var(--muted)} .small{font-size:12px} .mono{font-family:var(--mono);font-size:11.5px}
+.audit li{list-style:none;border-left:2px solid var(--line);padding:2px 0 8px 10px;margin-left:2px}
+.audit{padding:0;margin:6px 0 0}
+.actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.actions button{flex:1}
+.a-tm{border-color:var(--high)!important;color:var(--high)} .a-fp{border-color:var(--low)!important;color:var(--low)}
+.danger{border-color:var(--high);color:var(--high)}
+h3{font-size:13px;margin:14px 0 6px}
+.stat{display:grid;grid-template-columns:1fr auto;gap:2px 12px;font-size:13px}
+.stat span:nth-child(even){text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+footer{color:var(--muted);font-size:12px;text-align:center;padding:10px 0 24px}
+@media (max-width:640px){main{padding:16px}header{padding:12px 16px}header .pills{margin-left:0}.pill{white-space:normal}.row2{grid-template-columns:1fr}.banner{padding:0 16px}}
+@media (max-width:1050px){.grid{grid-template-columns:1fr}.dgrid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.sig{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Sanctions Triage Copilot</h1>
+    <div class="sub">Screening · LLM-assisted L1 triage · deterministic guardrails · tamper-evident audit</div>
+  </div>
+  <div class="pills">
+    <span class="pill" id="p-list">list: …</span>
+    <span class="pill" id="p-adj">adjudicator: …</span>
+    <span class="pill" id="p-audit"><span class="dot"></span> audit chain …</span>
+    <button class="pill" id="p-admin" type="button" style="border:none;color:inherit;cursor:pointer;display:none">🔒 admin</button>
+  </div>
+</header>
+<div class="banner" id="banner"></div>
+<div class="banner" id="adminbox" style="display:none"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+  <span id="admin-msg">Analyst decisions and admin actions need the admin passcode.</span>
+  <input id="admin-pass" type="password" placeholder="Admin passcode" style="max-width:220px" autocomplete="current-password">
+  <button id="admin-unlock" type="button">Unlock</button><button id="admin-cancel" type="button">Cancel</button>
+</div></div>
+
+<main>
+  <section class="kpis">
+    <div class="kpi"><div class="v" id="k-pending">0</div><div class="l">Alerts awaiting an analyst</div></div>
+    <div class="kpi"><div class="v" id="k-closed">0</div><div class="l">Auto-closed on hard evidence</div></div>
+    <div class="kpi"><div class="v" id="k-rate">0%</div><div class="l">Auto-close rate</div></div>
+    <div class="kpi"><div class="v" id="k-list">–</div><div class="l">Sanctions list entries</div></div>
+    <div class="kpi"><div class="v" id="k-cust">0</div><div class="l">Customers in book</div></div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <div class="tabs" id="lefttabs">
+        <button class="tab on" data-p="p-screen">Screen a party</button>
+        <button class="tab" data-p="p-book">Customer book</button>
+        <button class="tab" data-p="p-lists">Watchlists</button>
+      </div>
+
+      <!-- Screen a party -->
+      <div class="pane on body" id="p-screen">
+        <h4>Demo scenarios</h4>
+        <div class="chips" id="scenarios"></div>
+        <p class="hint">Each button fills in a test customer and screens it against the loaded list. Screening the same customer again links to its existing alert instead of creating a duplicate.</p>
+        <div class="scen-desc" id="scen-desc"></div>
+        <form id="f" autocomplete="off">
+          <label for="name">Name</label>
+          <input id="name" required placeholder="Full name, company or vessel">
+          <div class="row2">
+            <div><label for="type">Type</label>
+              <select id="type"><option value="individual">Individual</option><option value="entity">Entity</option><option value="vessel">Vessel</option><option value="unknown">Unknown</option></select></div>
+            <div><label for="dob">Date of birth</label><input id="dob" placeholder="1968-02-14 or 1968"></div>
+          </div>
+          <div class="row2">
+            <div><label for="country">Country</label><input id="country"></div>
+            <div><label for="nat">Nationality</label><input id="nat"></div>
+          </div>
+          <label for="ids">ID numbers (passport, IMO, registration; comma-separated)</label>
+          <input id="ids">
+          <label for="notes">Free text (KYC notes / payment remittance info, untrusted)</label>
+          <textarea id="notes"></textarea>
+          <div class="btnrow">
+            <button class="primary" id="go" type="submit">Screen</button>
+            <button type="button" id="clearform">Clear form</button>
+          </div>
+        </form>
+        <div class="result" id="result"></div>
+      </div>
+
+      <!-- Customer book -->
+      <div class="pane body" id="p-book">
+        <h4>Synthetic customer book</h4>
+        <p class="hint" style="margin-top:0">SDV learns realistic attribute structure (segment, country, age, turnover, PEP, risk rating, using FATF June 2026 lists); Faker fills names and IDs. A small share of customers are planted from the live sanctions list, some as true matches (with spelling variants, typos and partial DOBs) and some as same-name near-misses, so screening quality can be measured.</p>
+        <div id="book-summary" class="stat" style="margin:10px 0"></div>
+        <div class="row2">
+          <div><label for="gen-n">Customers</label>
+            <select id="gen-n"><option>500</option><option selected>2000</option><option>5000</option><option>10000</option></select></div>
+          <div><label>&nbsp;</label><label style="margin:8px 0 0;color:var(--ink)"><input type="checkbox" id="gen-sdv" checked>Use SDV</label></div>
+        </div>
+        <div class="btnrow">
+          <button id="gen-go" class="wide">Generate customer book</button>
+        </div>
+        <div class="btnrow" style="margin-top:8px">
+          <button id="book-screen" class="primary wide">Screen entire book</button>
+        </div>
+        <div id="job-book" style="display:none"><div class="bar"><i id="job-book-bar" style="width:0"></i></div><div class="small muted" id="job-book-txt"></div></div>
+        <h3>Last batch run</h3>
+        <div id="book-last" class="small muted">Not run yet.</div>
+        <h3>Preview</h3>
+        <div style="overflow-x:auto"><table class="mini"><thead><tr><th>ID</th><th>Name</th><th>Country</th><th>Segment</th><th>Risk</th></tr></thead><tbody id="book-rows"></tbody></table></div>
+      </div>
+
+      <!-- Watchlists -->
+      <div class="pane body" id="p-lists">
+        <h4>Loaded lists</h4>
+        <div id="lists-info" class="small"></div>
+        <div style="overflow-x:auto;margin-top:8px"><table class="mini"><thead><tr><th>Dataset</th><th class="num">Entities</th><th>Version</th><th>From</th></tr></thead><tbody id="lists-rows"></tbody></table></div>
+        <div class="btnrow"><button id="lists-refresh" class="wide">Check for list updates now</button></div>
+        <div id="job-lists" class="small muted" style="margin-top:8px"></div>
+        <h3>Last update</h3>
+        <div id="lists-delta" class="small muted">–</div>
+        <p class="hint" id="lists-attr"></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tabs" id="tabs">
+        <button class="tab on" data-s="pending_review">Awaiting analyst</button>
+        <button class="tab" data-s="auto_closed">Auto-closed</button>
+        <button class="tab" data-s="decided">Analyst decided</button>
+        <button class="tab" data-s="">All</button>
+        <span class="spacer"></span>
+        <span class="small muted" id="qcount" style="margin:0 8px 10px"></span>
+        <button class="tool danger" id="reset" type="button">Reset queue</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Priority</th><th>Customer</th><th>Listed party</th><th>Programs</th><th class="num">Score</th><th>Recommendation</th><th>Status</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="empty">No alerts here. Screen a party, pick a demo scenario, or screen the customer book.</div>
+      <div class="detail" id="detail"></div>
+    </div>
+  </section>
+  <footer id="footer">Recommendations support, and never replace, a qualified analyst's decision.</footer>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const label = s => esc(String(s||"").replace(/_/g," "));
+const fmt = n => (n ?? 0).toLocaleString();
+let filter = "pending_review", selected = null, scenarios = [], resetArmed = false, adminRequired = false;
+function getPass(){ try { return sessionStorage.getItem("stc_admin") || ""; } catch { return ""; } }
+function setPass(v){ try { v ? sessionStorage.setItem("stc_admin", v) : sessionStorage.removeItem("stc_admin"); } catch {} }
+
+async function api(path, opts={}) {
+  const headers = {"content-type":"application/json"}; const pw = getPass(); if (pw) headers["X-Admin-Passcode"] = pw;
+  const r = await fetch(path, {...opts, headers});
+  if (!r.ok) {
+    let m = r.statusText; try { m = (await r.json()).detail || m } catch {}
+    if (r.status === 401 || r.status === 403) { showAdmin(m); }
+    throw new Error(m);
+  }
+  return r.json();
+}
+function showAdmin(msg){ $("#adminbox").style.display="block"; $("#admin-msg").textContent = msg || "Admin passcode required."; $("#admin-pass").focus(); }
+function paintAdmin(){ const b=$("#p-admin"); b.style.display = adminRequired ? "inline-flex" : "none"; b.textContent = getPass() ? "🔓 admin" : "🔒 admin"; }
+function ago(ts){ if(!ts) return "never"; const s=(Date.now()-Date.parse(ts))/1000; if(s<90) return "just now"; if(s<5400) return Math.round(s/60)+" min ago"; if(s<172800) return Math.round(s/3600)+" h ago"; return Math.round(s/86400)+" days ago"; }
+
+$("#p-admin").addEventListener("click", ()=>{ if (getPass()) { setPass(""); paintAdmin(); } else showAdmin("Enter the admin passcode to record decisions and run admin actions."); });
+$("#admin-cancel").addEventListener("click", ()=>{ $("#adminbox").style.display="none"; });
+$("#admin-unlock").addEventListener("click", async()=>{
+  setPass($("#admin-pass").value.trim());
+  try { await api("/api/admin/check"); $("#adminbox").style.display="none"; $("#admin-pass").value=""; }
+  catch { setPass(""); $("#admin-msg").textContent = "That passcode was not accepted."; }
+  paintAdmin();
+});
+$("#admin-pass").addEventListener("keydown", e=>{ if(e.key==="Enter") $("#admin-unlock").click(); });
+
+/* ---------------- left tabs ---------------- */
+$("#lefttabs").addEventListener("click", e=>{
+  const p=e.target.dataset.p; if(!p) return;
+  document.querySelectorAll("#lefttabs .tab").forEach(t=>t.classList.toggle("on", t.dataset.p===p));
+  document.querySelectorAll(".pane").forEach(x=>x.classList.toggle("on", x.id===p));
+  if(p==="p-book") loadBook(); if(p==="p-lists") loadLists();
+});
+
+/* ---------------- scenarios & screening ---------------- */
+async function loadScenarios(){
+  scenarios = await api("/api/scenarios");
+  $("#scenarios").innerHTML = scenarios.map((s,i)=>`<button class="chip" data-i="${i}" type="button" title="${esc(s.description)}">${esc(s.title)}</button>`).join("");
+}
+$("#scenarios").addEventListener("click", e=>{
+  const i=e.target.dataset.i; if(i===undefined) return;
+  document.querySelectorAll("#scenarios .chip").forEach(c=>c.classList.toggle("on", c.dataset.i===i));
+  const s=scenarios[i]; $("#scen-desc").style.display="block"; $("#scen-desc").textContent = s.description;
+  fill(s.party); screen(s.party);
+});
+function fill(p){
+  $("#name").value=p.name||""; $("#type").value=p.party_type||"unknown"; $("#dob").value=p.dob||"";
+  $("#country").value=p.country||""; $("#nat").value=p.nationality||""; $("#ids").value=(p.id_numbers||[]).join(", "); $("#notes").value=p.notes||"";
+}
+$("#clearform").addEventListener("click", ()=>{ fill({party_type:"individual"}); $("#result").className="result"; $("#scen-desc").style.display="none";
+  document.querySelectorAll("#scenarios .chip").forEach(c=>c.classList.remove("on")); });
+
+const OUTCOME = {
+  clear:["No potential matches","Nothing on the loaded lists resembles this party."],
+  review:["Sent to the analyst queue","At least one potential match needs a human decision."],
+  auto_closed:["Alert auto-closed as a false positive","Closed on deterministic evidence; eligible for QA sampling."],
+  suppressed:["Hit suppressed (previously cleared)","Same customer data and same list entry as an alert already cleared, so no new alert."],
+  blocked:["Confirmed sanctioned party","An analyst has already confirmed this match. Keep blocked."],
+};
+async function screen(p){
+  $("#go").disabled=true; $("#go").textContent="Screening…";
+  try{
+    const r = await api("/api/screen",{method:"POST", body:JSON.stringify(p)});
+    const [head, sub] = OUTCOME[r.outcome] || [r.outcome,""];
+    let html = `<div class="big">${esc(head)}</div><div class="small muted">${esc(sub)}</div>`;
+    if (r.injection_flags.length) html += `<div class="note bad">⚠ Prompt injection detected in the free text (${esc(r.injection_flags.join(" | "))}). Automatic closure disabled; case flagged high priority.</div>`;
+    if (r.alerts.length) html += `<div class="note">${r.alerts.length} new alert(s): ${r.alerts.map(a=>`<b>${esc(a.alert_id)}</b> ${label(a.decision.verdict)} → ${label(a.status)}`).join("; ")}</div>`;
+    for (const h of r.repeat_hits) html += `<div class="note">↺ ${esc(h.list_name)}: ${esc(h.detail)}</div>`;
+    html += `<div class="small muted" style="margin-top:8px">Screened against ${esc(r.list_source)} (${fmt(r.list_size)} entries) in ${r.duration_ms} ms · ${esc(r.request_id)}</div>`;
+    $("#result").className="result show"; $("#result").innerHTML=html;
+    const first = r.alerts[0]?.alert_id || r.repeat_hits[0]?.alert_id;
+    if (r.outcome==="auto_closed") filter="auto_closed"; else if (r.outcome==="review") filter="pending_review"; else if (first) filter="";
+    setTab(); await refresh();
+    if (first) openAlert(first);
+  }catch(e){ $("#result").className="result show"; $("#result").textContent="Error: "+e.message; }
+  finally{ $("#go").disabled=false; $("#go").textContent="Screen"; }
+}
+$("#f").addEventListener("submit", e=>{
+  e.preventDefault();
+  const p={name:$("#name").value.trim(), party_type:$("#type").value};
+  for (const [k,id] of [["dob","#dob"],["country","#country"],["nationality","#nat"],["notes","#notes"]]) { const v=$(id).value.trim(); if(v) p[k]=v; }
+  const ids=$("#ids").value.split(",").map(s=>s.trim()).filter(Boolean); if(ids.length) p.id_numbers=ids;
+  screen(p);
+});
+
+/* ---------------- queue ---------------- */
+function setTab(){ document.querySelectorAll("#tabs .tab").forEach(t=>t.classList.toggle("on", t.dataset.s===filter)); }
+$("#tabs").addEventListener("click", e=>{ if(e.target.dataset.s!==undefined){ filter=e.target.dataset.s; setTab(); refresh(); }});
+$("#reset").addEventListener("click", async()=>{
+  if(!resetArmed){ resetArmed=true; $("#reset").textContent="Click again to confirm"; setTimeout(()=>{resetArmed=false;$("#reset").textContent="Reset queue";},4000); return; }
+  resetArmed=false; $("#reset").textContent="Reset queue";
+  try{ const r=await api("/api/admin/reset-queue",{method:"POST"}); $("#detail").className="detail"; selected=null; await refresh();
+       $("#qcount").textContent=`${r.removed} alerts removed (audit log kept)`; }catch(e){ $("#qcount").textContent=e.message; }
+});
+
+async function refresh(){
+  const q = filter==="decided" ? Promise.all([api("/api/alerts?status=confirmed_match"),api("/api/alerts?status=cleared")]).then(([a,b])=>a.concat(b))
+           : api("/api/alerts"+(filter?`?status=${filter}`:""));
+  const [alerts, m, h, v, lists] = await Promise.all([q, api("/api/metrics"), api("/api/health"), api("/api/audit/verify"), api("/api/lists")]);
+  const fresh = h.list_status==="loading" ? "loading…" : h.list_version==="static" ? "demo list" : "checked "+ago(lists.last_refresh||null);
+  $("#p-list").textContent = `list: ${h.list_source} · ${fmt(h.list_size)} · ${fresh}`;
+  $("#p-adj").textContent = `adjudicator: ${h.adjudicator} · ${h.backend}${h.serverless?" · serverless":""}`;
+  adminRequired = h.admin_required; paintAdmin();
+  $("#p-audit").innerHTML = `<span class="dot" style="color:${v.valid?'#7ee2a8':'#ff8a80'}"></span> audit chain ${v.valid?'verified':'BROKEN'} · ${fmt(v.records)} records`;
+  $("#k-pending").textContent=fmt(m.by_status.pending_review); $("#k-closed").textContent=fmt(m.by_status.auto_closed);
+  $("#k-rate").textContent=Math.round(m.auto_close_rate*100)+"%"; $("#k-list").textContent=fmt(m.list_size);
+  const ban = lists.status==="loading" ? `<div>⏳ ${esc(lists.message||"Loading lists…")} Screening uses the ${esc(h.list_source)} list until it finishes.</div>`
+           : lists.status==="error" ? `<div class="err">${esc(lists.message)} Using ${esc(h.list_source)}.</div>`
+           : (lists.status==="demo"||lists.status==="empty") ? `<div>ℹ ${esc(lists.message)}</div>` : "";
+  $("#banner").innerHTML = ban;
+  $("#qcount").textContent = `${fmt(alerts.length)} shown`;
+  $("#empty").style.display = alerts.length? "none":"block";
+  $("#rows").innerHTML = alerts.map(a=>`<tr data-id="${esc(a.alert_id)}" class="${a.alert_id===selected?'sel':''}">
+    <td><span class="badge b-${esc(a.priority)}">${label(a.priority)}</span>${a.origin&&a.origin!=="screening"?`<div style="margin-top:4px"><span class="badge b-origin">${label(a.origin)}</span></div>`:""}</td>
+    <td>${esc(a.party.name)}<div class="small muted">${label(a.party.party_type)}${a.party.dob?' · '+esc(a.party.dob):''}${a.party.reference?' · '+esc(a.party.reference):''}</div></td>
+    <td>${esc(a.candidate.entry.name)}<div class="small muted mono">${esc(a.candidate.entry.uid)}</div></td>
+    <td class="small">${esc(a.candidate.entry.programs.slice(0,3).join(", "))}</td>
+    <td class="num">${a.candidate.name_score.toFixed(1)}</td>
+    <td><span class="badge b-${esc(a.decision.verdict)}">${label(a.decision.verdict)}</span> <span class="small muted">${Math.round(a.decision.confidence*100)}%</span></td>
+    <td><span class="badge b-${esc(a.status)}">${label(a.status)}</span></td></tr>`).join("");
+  return lists;
+}
+$("#rows").addEventListener("click", e=>{ const tr=e.target.closest("tr"); if(tr) openAlert(tr.dataset.id); });
+
+function sigCard(name, outcome, detail){
+  return `<div class="sigc s-${esc(outcome)}"><b>${esc(name)}</b>${label(outcome)}<div class="muted small">${esc(detail)}</div></div>`;
+}
+async function openAlert(id){
+  selected=id;
+  const [a, trail] = await Promise.all([api(`/api/alerts/${id}`), api(`/api/alerts/${id}/audit`)]);
+  document.querySelectorAll("#rows tr").forEach(tr=>tr.classList.toggle("sel", tr.dataset.id===id));
+  const p=a.party, e=a.candidate.entry, s=a.candidate.signals, d=a.decision;
+  const rows = [
+    ["Name", esc(p.name), `${esc(e.name)}${a.candidate.matched_name!==e.name?`<div class="small muted">matched alias: ${esc(a.candidate.matched_name)}</div>`:''}`],
+    ["Type", label(p.party_type), label(e.party_type)],
+    ["DOB", esc(p.dob||"–"), esc(e.dobs.join("; ")||"–")],
+    ["Country", esc([p.country,p.nationality].filter(Boolean).join(" / ")||"–"), esc(e.countries.join(", ")||"–")],
+    ["IDs", esc(p.id_numbers.join(", ")||"–"), esc(e.id_numbers.slice(0,6).join(", ")||"–")],
+    ["Programs", "", esc(e.programs.join(", "))],
+  ];
+  const inj = (a.injection_flags.length||d.suspected_injection) ?
+    `<div class="warn">⚠ Possible prompt injection in free text: ${esc(a.injection_flags.join(" | ")||"flagged by model")}</div>` : "";
+  const review = a.review ? `<div class="rec small"><b>Analyst decision:</b> ${label(a.review.outcome)} by ${esc(a.review.analyst)} · ${esc(a.review.reviewed_at)}<div>${esc(a.review.comment)}</div></div>` :
+   `<h3>Analyst decision</h3>
+    <div class="row2"><input id="rv-analyst" placeholder="Analyst ID" value="analyst.1"><input id="rv-comment" placeholder="Comment for the case file"></div>
+    <div class="actions">
+      <button class="a-tm" data-o="true_match">Confirm match</button>
+      <button class="a-fp" data-o="false_positive">Clear as false positive</button>
+      <button data-o="escalate">Escalate to L2</button>
+    </div>`;
+  $("#detail").className="detail show";
+  $("#detail").innerHTML = `<div class="dgrid">
+    <div>
+      <div class="small muted mono">${esc(a.alert_id)} · ${esc(a.request_id)} · ${esc(a.created_at)} · origin: ${esc(a.origin||"screening")}</div>
+      <table class="cmp" style="margin-top:8px"><thead><tr><th></th><th>Customer</th><th>Listed (${esc(e.source)})</th></tr></thead>
+      <tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</tbody></table>
+      <div class="sig">
+        ${sigCard("Date of birth", s.dob, s.dob_detail)}${sigCard("Country", s.country, s.country_detail)}
+        ${sigCard("Identifier", s.id_number, s.id_detail)}${sigCard("Party type", s.party_type, s.party_type_detail)}
+      </div>
+      <div class="small muted">Signals are computed deterministically in code (red supports a match, green contradicts it). Name similarity: <b>${a.candidate.name_score}</b>/100.</div>
+      ${e.remarks?`<h3>List remarks</h3><div class="small muted">${esc(e.remarks)}</div>`:""}
+      ${p.notes?`<h3>Free text (untrusted)</h3><div class="small mono" style="white-space:pre-wrap;background:var(--soft);padding:8px;border-radius:8px">${esc(p.notes)}</div>`:""}
+    </div>
+    <div>
+      ${inj}
+      <div class="rec">
+        <div><span class="badge b-${esc(d.verdict)}">${label(d.verdict)}</span> <span class="small muted">recommended by ${esc(d.adjudicator)}${d.latency_ms?` · ${d.latency_ms} ms`:""}</span></div>
+        <div class="bar"><i style="width:${Math.round(d.confidence*100)}%"></i></div>
+        <div>${esc(d.rationale)}</div>
+        ${d.next_steps.length?`<ul class="tight small">${d.next_steps.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+        ${d.notes.length?`<div class="small muted" style="margin-top:6px">${d.notes.map(esc).join("<br>")}</div>`:""}
+      </div>
+      <h3>Policy</h3>
+      <div><span class="badge b-${esc(a.status)}">${label(a.status)}</span> <span class="badge b-${esc(a.priority)}">${label(a.priority)} priority</span></div>
+      <ul class="tight small">${a.policy_notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>
+      ${review}
+      <h3>Audit trail</h3>
+      <ul class="audit small">${trail.map(t=>`<li><b>${label(t.event)}</b> by ${esc(t.actor)} · ${esc(t.ts)}<div class="mono muted">sha256 ${esc(t.hash.slice(0,16))}… ← ${esc(t.prev_hash.slice(0,8))}…</div></li>`).join("")}</ul>
+    </div></div>`;
+  $("#detail").querySelectorAll("[data-o]").forEach(b=>b.addEventListener("click", async()=>{
+    const analyst=$("#rv-analyst").value.trim()||"analyst"; const comment=$("#rv-comment").value.trim();
+    try { await api(`/api/alerts/${id}/review`,{method:"POST", body:JSON.stringify({analyst, outcome:b.dataset.o, comment})}); }
+    catch(e){ return; }
+    await refresh(); openAlert(id);
+  }));
+}
+
+/* ---------------- jobs ---------------- */
+async function poll(job, onTick){
+  onTick(job); if(job.status!=="running") return job;  // serverless deployments finish jobs inside the request
+  for(;;){ await new Promise(r=>setTimeout(r,800)); const j=await api(`/api/jobs/${job.job_id}`); onTick(j); if(j.status!=="running") return j; }
+}
+
+/* ---------------- customer book ---------------- */
+async function loadBook(){
+  const c = await api("/api/customers?limit=10");
+  $("#k-cust").textContent = fmt(c.count);
+  $("#book-summary").innerHTML = c.count ? `<span>Customers</span><span>${fmt(c.count)}</span><span>Planted true matches</span><span>${fmt(c.planted_true_matches)}</span><span>Planted same-name near-misses</span><span>${fmt(c.planted_near_misses)}</span>`
+    : `<span class="muted">No customer book yet. Generate one below.</span><span></span>`;
+  $("#book-screen").disabled = !c.count;
+  $("#book-rows").innerHTML = c.sample.map(r=>`<tr><td class="mono">${esc(r.customer_id)}</td><td>${esc(r.name)}<div class="small muted">${label(r.party_type)}</div></td><td>${esc(r.country)}</td><td>${label(r.segment)}</td><td><span class="badge b-${r.risk_rating==='high'?'high':r.risk_rating==='medium'?'medium':'low'}">${r.risk_rating==='medium'?'med':esc(r.risk_rating)}</span></td></tr>`).join("");
+  const L = c.last_batch;
+  $("#book-last").innerHTML = !L ? "Not run yet." : `<div class="stat">
+    <span>Customers screened</span><span>${fmt(L.customers)}</span>
+    <span>Customers with a hit</span><span>${fmt(L.customers_with_hits)} (${(100*L.customers_with_hits/Math.max(1,L.customers)).toFixed(1)}%)</span>
+    <span>New alerts · repeat hits</span><span>${fmt(L.new_alerts)} · ${fmt(L.repeat_hits)}</span>
+    <span>Auto-closed · to analysts</span><span>${fmt(L.auto_closed)} · ${fmt(L.pending_review)}</span>
+    <span><b>Recall on planted true matches</b></span><span>${L.planted_recall==null?"–":(100*L.planted_recall).toFixed(1)+"%"} (${L.planted_found}/${L.planted_true_matches})</span>
+    <span>Planted matches wrongly auto-closed</span><span>${L.planted_found-L.planted_found_not_auto_closed}</span>
+    <span>Near-miss alerts auto-closed</span><span>${fmt(L.near_miss_auto_closed)} of ${fmt(L.near_misses)}</span>
+    <span>Speed</span><span>${L.ms_per_customer} ms / customer</span></div>
+    ${L.missed.length?`<div class="small" style="margin-top:6px"><b>Missed planted matches</b> (tune these):<ul class="tight">${L.missed.slice(0,6).map(m=>`<li>${esc(m.name)} → ${esc(m.list_uid)} <span class="muted">(${esc(m.method)})</span></li>`).join("")}</ul></div>`:""}
+    <div class="small muted" style="margin-top:4px">List ${esc(L.list_version)} · ${esc(L.finished_at)}</div>`;
+}
+function bookProgress(j, verb){
+  $("#job-book").style.display="block";
+  const pct = j.total ? Math.round(100*j.progress/j.total) : (j.status==="running"? 15 : 100);
+  $("#job-book-bar").style.width = pct+"%";
+  $("#job-book-txt").textContent = j.status==="running" ? `${verb}… ${j.total? fmt(j.progress)+" / "+fmt(j.total):""}` : j.status==="done" ? "Done." : "Failed: "+j.error;
+}
+$("#gen-go").addEventListener("click", async()=>{
+  $("#gen-go").disabled=true;
+  try{ const j=await api("/api/customers/generate",{method:"POST", body:JSON.stringify({n:+$("#gen-n").value, use_sdv:$("#gen-sdv").checked})});
+       const done=await poll(j, x=>bookProgress(x,"Generating (fitting SDV, then Faker)"));
+       if(done.result) $("#job-book-txt").textContent = `Generated ${fmt(done.result.customers)} customers · method: ${done.result.method}${done.result.sdv_quality_score?` · SDV quality ${Math.round(done.result.sdv_quality_score*100)}%`:""} · planted ${done.result.planted_true_matches} true matches + ${done.result.planted_near_misses} near-misses from ${done.result.list_source}`;
+       await loadBook(); }
+  catch(e){ $("#job-book").style.display="block"; $("#job-book-txt").textContent=e.message; }
+  finally{ $("#gen-go").disabled=false; }
+});
+$("#book-screen").addEventListener("click", async()=>{
+  $("#book-screen").disabled=true;
+  try{ const j=await api("/api/customers/screen",{method:"POST"}); await poll(j, async x=>{ bookProgress(x,"Screening"); if(x.progress%200===0) refresh(); });
+       filter="pending_review"; setTab(); await refresh(); await loadBook(); }
+  catch(e){ $("#job-book").style.display="block"; $("#job-book-txt").textContent=e.message; }
+  finally{ $("#book-screen").disabled=false; }
+});
+
+/* ---------------- watchlists ---------------- */
+async function loadLists(){
+  const l = await api("/api/lists");
+  $("#lists-info").innerHTML = `<b>${esc(l.source)}</b> · ${fmt(l.entities)} entries · status: ${esc(l.status)}${l.message?` · ${esc(l.message)}`:""}<br>
+    <span class="muted">Configured: ${esc(l.configured)} · storage: ${esc(l.backend)} · refresh: ${esc(l.schedule)} · last check ${ago(l.last_refresh)}</span>`;
+  $("#lists-rows").innerHTML = (l.datasets||[]).map(d=>`<tr><td>${esc(d.name)}${d.error?`<div class="small" style="color:var(--high)">${esc(d.error)}</div>`:""}</td><td class="num">${fmt(d.entities)}</td><td class="mono">${esc(d.version||"–")}</td><td>${esc(d.source||"–")}</td></tr>`).join("");
+  const D = l.last_delta;
+  $("#lists-delta").innerHTML = !D ? "No updates applied yet." : !D.updated ? "No changes." :
+    `${D.baseline?"Baseline load":"Delta vs previous version"}: <b>+${fmt(D.added)}</b> added, <b>${fmt(D.changed)}</b> changed, <b>${fmt(D.removed)}</b> removed.` +
+    (D.rescreen?` Re-screened ${fmt(D.rescreen.customers)} customers against the new/changed entries: ${fmt(D.rescreen.new_alerts)} new alerts.`:" (Only new and changed entries are re-screened against the customer book.)");
+  $("#lists-attr").textContent = l.attribution || "";
+  $("#footer").textContent = (l.attribution? l.attribution+" · ":"") + "Recommendations support, and never replace, a qualified analyst's decision.";
+  return l;
+}
+$("#lists-refresh").addEventListener("click", async()=>{
+  $("#lists-refresh").disabled=true;
+  try{ const j=await api("/api/lists/refresh",{method:"POST"});
+       const done=await poll(j, async x=>{ $("#job-lists").textContent = x.status==="running" ? "Checking OpenSanctions… "+((await api("/api/lists")).message||"") : ""; });
+       $("#job-lists").textContent = done.status==="failed" ? "Failed: "+done.error : done.result && done.result.updated===false ? "Already up to date." : "Updated.";
+       await loadLists(); await loadScenarios(); await refresh(); }
+  catch(e){ $("#job-lists").textContent=e.message; }
+  finally{ $("#lists-refresh").disabled=false; }
+});
+
+/* ---------------- boot ---------------- */
+let lastSource = null;
+async function tick(){
+  const l = await refresh();
+  if (l.source !== lastSource){ lastSource = l.source; await loadScenarios(); if ($("#p-lists").classList.contains("on")) loadLists(); }
+}
+(async()=>{ await tick(); loadBook(); loadLists(); setInterval(tick, 8000); })();
+</script>
+</body>
+</html>
