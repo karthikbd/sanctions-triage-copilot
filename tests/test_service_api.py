@@ -57,3 +57,24 @@ def test_admin_passcode_and_cron_secret():
     assert client.get("/api/cron/daily").status_code == 401
     r = client.get("/api/cron/daily", headers={"Authorization": "Bearer cron-token"})
     assert r.status_code == 200 and r.json()["queue_reset"] is None  # alerts persist unless STC_NIGHTLY_RESET=true
+
+
+def test_countries_endpoint_feeds_the_picker(service):
+    from sanctions_copilot.normalize import normalize_country
+
+    rows = TestClient(create_app(service)).get("/api/countries").json()
+    names = [r["name"] for r in rows]
+    assert len(rows) > 240 and len(names) == len(set(names))
+    by_code = {r["code"]: r for r in rows}
+    assert "uae" in by_code["ae"]["aliases"] and "dprk" in by_code["kp"]["aliases"]
+    # every name the picker submits normalizes back to its own code (DR Congo used to map to the retired 'zr')
+    assert all(normalize_country(r["name"]) == r["code"] for r in rows)
+    assert normalize_country("Congo, The Democratic Republic of the") == "cd"
+
+
+def test_package_data_is_not_excluded_from_vercel_uploads():
+    # A bare "data/" in .vercelignore also matched src/sanctions_copilot/data and broke /api/scenarios on Vercel.
+    from pathlib import Path
+
+    ignore = (Path(__file__).parents[1] / ".vercelignore").read_text().split()
+    assert "data/" not in ignore and "data" not in ignore

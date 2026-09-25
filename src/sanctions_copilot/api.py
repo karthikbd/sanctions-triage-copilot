@@ -184,6 +184,13 @@ def create_app(service: Optional[TriageService] = None, start_scheduler: Optiona
                 "refresh_hours": st.refresh_hours, "schedule": "Vercel cron (daily) + GitHub Actions (6-hourly)" if st.serverless
                 else f"every {st.refresh_hours} h", **state}
 
+    @app.get("/api/countries")
+    def countries():
+        """Every country/territory the matcher understands, with common aliases for search (UAE, DPRK, UK...)."""
+        from .normalize import country_options
+
+        return country_options()
+
     @app.get("/api/scenarios")
     def scenarios():
         from .service import build_scenarios

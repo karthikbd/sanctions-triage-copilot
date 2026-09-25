@@ -117,6 +117,7 @@ export interface ListsInfo {
 }
 
 export interface Scenario { title: string; description: string; party: Party }
+export interface Country { code: string; name: string; aliases: string[]; historic: boolean }
 
 export interface Customer {
   customer_id: string; name: string; party_type: PartyType; country: string; segment: string; risk_rating: string;

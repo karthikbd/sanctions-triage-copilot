@@ -88,14 +88,19 @@ export const Input = (p: InputHTMLAttributes<HTMLInputElement>) => <input {...p}
 export const Select = (p: SelectHTMLAttributes<HTMLSelectElement>) => <select {...p} className={cx(inputCls, "h-8", p.className)} />;
 export const Textarea = (p: TextareaHTMLAttributes<HTMLTextAreaElement>) => <textarea {...p} className={cx(inputCls, "min-h-16 resize-y", p.className)} />;
 
-export function Field({ label, hint, children, className }: { label: string; hint?: string; children: ReactNode; className?: string }) {
-  return (
-    <label className={cx("block", className)}>
-      <span className="mb-1 block text-[12px] font-medium text-muted">{label}</span>
+/** A labelled form row. Pass `htmlFor` for composite controls (pickers with their own buttons), so the wrapper is a
+ *  <div> and clicks on inner buttons aren't redirected to the input the way a wrapping <label> would. */
+export function Field({ label, hint, children, className, htmlFor }:
+  { label: string; hint?: string; children: ReactNode; className?: string; htmlFor?: string }) {
+  const body = (
+    <>
+      {htmlFor ? <label htmlFor={htmlFor} className="mb-1 block text-[12px] font-medium text-muted">{label}</label>
+        : <span className="mb-1 block text-[12px] font-medium text-muted">{label}</span>}
       {children}
       {hint && <span className="mt-1 block text-[11.5px] text-faint">{hint}</span>}
-    </label>
+    </>
   );
+  return htmlFor ? <div className={cx("block", className)}>{body}</div> : <label className={cx("block", className)}>{body}</label>;
 }
 
 export function Card({ title, actions, children, className, bodyClass }:
@@ -161,11 +166,11 @@ export function Empty({ title, children }: { title: string; children?: ReactNode
 
 export function KV({ rows }: { rows: [ReactNode, ReactNode][] }) {
   return (
-    <dl className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-1.5 text-[12.5px]">
+    <dl className="grid grid-cols-[max-content_minmax(0,1fr)] gap-x-4 gap-y-1.5 text-[12.5px]">
       {rows.map(([k, v], i) => (
         <div key={i} className="contents">
-          <dt className="text-muted">{k}</dt>
-          <dd className="tnum text-right font-medium">{v}</dd>
+          <dt className="whitespace-nowrap text-muted">{k}</dt>
+          <dd className="tnum min-w-0 text-right font-medium [overflow-wrap:anywhere]">{v}</dd>
         </div>
       ))}
     </dl>

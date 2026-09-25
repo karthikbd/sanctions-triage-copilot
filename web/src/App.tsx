@@ -163,7 +163,7 @@ export default function App() {
           <main className="scroll-thin min-h-0 flex-1 overflow-y-auto">
             <div className="mx-auto max-w-[1400px] space-y-4 p-4 md:p-6">
               <StatusBanner health={health} lists={lists} offline={offline} />
-              {adminPrompt !== null && (
+              {adminPrompt !== null && !alertId && (
                 <AdminBox
                   message={adminPrompt}
                   onClose={() => setAdminPrompt(null)}
@@ -182,6 +182,12 @@ export default function App() {
         </div>
       </div>
       {alertId && <AlertDrawer id={alertId} onClose={() => setAlertId(null)} />}
+      {/* With the alert drawer open, the passcode prompt floats above it (inline it would sit behind the overlay). */}
+      {alertId && adminPrompt !== null && (
+        <div className="fixed inset-x-0 top-3 z-50 mx-auto w-[min(640px,calc(100%-2rem))] rounded-lg bg-bg shadow-xl shadow-black/20">
+          <AdminBox message={adminPrompt} onClose={() => setAdminPrompt(null)} onUnlocked={() => { setIsAdmin(true); setAdminPrompt(null); }} />
+        </div>
+      )}
     </Ctx.Provider>
   );
 }

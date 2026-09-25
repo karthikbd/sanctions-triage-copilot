@@ -168,7 +168,9 @@ def _country_tables() -> tuple[dict[str, str], dict[str, str]]:
     from importlib import resources
 
     iso = json.loads(resources.files("sanctions_copilot.data").joinpath("iso_countries.json").read_text(encoding="utf-8"))
-    by_name = {_clean_country(name): code for code, name in iso.items()}
+    by_name: dict[str, str] = {}
+    for code, name in iso.items():  # first code wins, so DR Congo's name maps to 'cd', not the retired 'zr'
+        by_name.setdefault(_clean_country(name), code)
     by_name.update(_EXTRA_COUNTRY_ALIASES)
     return iso, by_name
 
@@ -187,6 +189,24 @@ def normalize_country(raw: Optional[str]) -> Optional[str]:
         return by_name[s]
     alpha3 = {"usa": "us", "gbr": "gb", "rus": "ru", "irn": "ir", "prk": "kp", "syr": "sy", "chn": "cn", "are": "ae"}
     return alpha3.get(s, s)
+
+
+@lru_cache(maxsize=1)
+def country_options() -> list[dict]:
+    """[{code, name, aliases, historic}] sorted by name, for the UI's searchable country picker."""
+    iso, _ = _country_tables()
+    aliases: dict[str, list[str]] = {}
+    for alias, code in _EXTRA_COUNTRY_ALIASES.items():
+        aliases.setdefault(code, []).append(alias)
+    seen: set[str] = set()
+    out = []
+    for code, name in iso.items():
+        canonical = normalize_country(name)  # e.g. 'zr' (old Zaire code) and 'cd' share a name; keep the one it maps to
+        if name in seen or canonical != code:
+            continue
+        seen.add(name)
+        out.append({"code": code, "name": name, "aliases": sorted(aliases.get(code, [])), "historic": len(code) != 2})
+    return sorted(out, key=lambda c: (c["historic"], _ascii(c["name"])))
 
 
 def country_name(code: Optional[str]) -> str:

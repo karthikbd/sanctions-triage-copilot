@@ -3,6 +3,7 @@ import { ArrowRight, Eraser, Play, TriangleAlert } from "lucide-react";
 import { api, post, type Party, type PartyType, type Scenario, type ScreeningResult } from "../api";
 import { useApp } from "../App";
 import { Badge, Button, Callout, Card, cx, Field, fmt, humanize, Input, Select, StatusText, statusTone, Textarea, verdictTone } from "../components/ui";
+import { CountryPicker, DobPicker, dobError } from "../components/pickers";
 
 const EMPTY: Party = { name: "", party_type: "individual", id_numbers: [] };
 
@@ -35,6 +36,7 @@ export function ScreenPage() {
   }, [listKey]);
 
   const set = (k: keyof Party) => (e: { target: { value: string } }) => setP((x) => ({ ...x, [k]: e.target.value }));
+  const setVal = (k: keyof Party) => (v: string) => setP((x) => ({ ...x, [k]: v }));
 
   const screen = async (party: Party) => {
     setBusy(true); setErr(null);
@@ -53,6 +55,8 @@ export function ScreenPage() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
+    const bad = dobError(p.dob ?? "");
+    if (bad) { setRes(null); setErr(`Date of birth: ${bad}`); return; }
     screen({ ...p, id_numbers: ids.split(",").map((x) => x.trim()).filter(Boolean) });
   };
 
@@ -90,9 +94,9 @@ export function ScreenPage() {
                   {["individual", "entity", "vessel", "unknown"].map((t) => <option key={t} value={t}>{humanize(t)}</option>)}
                 </Select>
               </Field>
-              <Field label="Date of birth"><Input value={p.dob ?? ""} onChange={set("dob")} placeholder="1968-02-14 or 1968" /></Field>
-              <Field label="Country"><Input value={p.country ?? ""} onChange={set("country")} /></Field>
-              <Field label="Nationality"><Input value={p.nationality ?? ""} onChange={set("nationality")} /></Field>
+              <Field label="Date of birth" htmlFor="dob"><DobPicker id="dob" value={p.dob ?? ""} onChange={setVal("dob")} /></Field>
+              <Field label="Country" htmlFor="country"><CountryPicker id="country" value={p.country ?? ""} onChange={setVal("country")} /></Field>
+              <Field label="Nationality" htmlFor="nationality"><CountryPicker id="nationality" value={p.nationality ?? ""} onChange={setVal("nationality")} placeholder="Search nationalities" /></Field>
             </div>
             <Field label="ID numbers" hint="Passport, IMO, registration. Comma-separated.">
               <Input value={ids} onChange={(e) => setIds(e.target.value)} />
